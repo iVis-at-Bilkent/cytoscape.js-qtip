@@ -244,9 +244,22 @@ SOFTWARE.
       var isCy = isFunction( ele.pan );
       var isEle = !isCy;
       var isNode = isEle && ele.isNode();
+      var isEdge = isEle && ele.isEdge();
+
       var cy = isCy ? ele : ele.cy();
       var cOff = cy.container().getBoundingClientRect();
-      var pos = isNode ? ele.renderedPosition() : ( e ? e.renderedPosition || e.cyRenderedPosition : undefined );
+      var edgeCenter;
+      if(isEdge){
+        var edgebb = ele.renderedBoundingBox({
+          includeNodes: false,
+          includeEdges: true,
+          includeLabels: false,
+          includeShadows: false
+        });
+
+        edgeCenter = {x: (edgebb.x1+edgebb.x2) / 2 , y: (edgebb.y1+edgebb.y2)/2  }
+      }
+      var pos = isNode ? ele.renderedPosition() : ( e ? e.renderedPosition || e.cyRenderedPosition || edgeCenter : undefined );
       if( !pos || pos.x == null || isNaN(pos.x) ){ return; }
 
       var bb = isNode ? ele.renderedBoundingBox({
